@@ -5,9 +5,11 @@ import io.amichne.konditional.context.Platform
 import io.amichne.konditional.context.Version
 import io.amichne.konditional.core.Namespace
 import io.amichne.konditional.core.id.StableId
+import io.amichne.konditional.core.result.ParseResult
 import io.amichne.konditional.serialization.fromJson
 import io.amichne.konditional.serialization.toJson
 import kotlin.test.Test
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class SmokeTest {
@@ -31,7 +33,7 @@ class SmokeTest {
         val json = Flags.toJson()
         val result = Flags.fromJson(json)
 
-        assertTrue(result.isSuccess)
+        assertIs<ParseResult.Success<*>>(result)
         assertTrue(Flags.enabled.evaluate(context))
     }
 }
