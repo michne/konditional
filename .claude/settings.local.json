@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__intellij-index__ide_find_symbol",
+      "mcp__intellij-index__ide_find_class",
+      "mcp__intellij-index__ide_diagnostics",
+      "mcp__intellij-index__ide_find_references",
+      "Bash(make test:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(xargs cat:*)",
+      "Bash(./gradlew :konditional-runtime:compileTestKotlin:*)",
+      "Bash(./gradlew :konditional-runtime:test:*)",
+      "Bash(make build:*)",
+      "Bash(./gradlew :konditional-runtime:detekt:*)",
+      "Bash(./gradlew :konditional-core:detekt:*)",
+      "Bash(git stash:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh label:*)",
+      "Bash(gh milestone:*)",
+      "Bash(ls:*)",
+      "Bash(./gradlew :konditional-core:test:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew :konditional-core:compileKotlin:*)",
+      "Bash(./gradlew :konditional-core:compileTestKotlin:*)",
+      "Bash(./gradlew :konditional-core:clean:*)",
+      "Bash(./gradlew :konditional-serialization:test:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-tool-call.py"
+          }
+        ]
+      }
+    ]
+  },
+  "remote": {
+    "defaultEnvironmentId": "env_01E2wnJX2hrFiDys2iPfiqUy"
+  }
+}
