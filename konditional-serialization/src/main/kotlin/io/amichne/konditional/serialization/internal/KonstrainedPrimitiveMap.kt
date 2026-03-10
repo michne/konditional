@@ -4,28 +4,28 @@ package io.amichne.konditional.serialization.internal
 
 import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.types.Konstrained
-import io.amichne.konditional.core.types.asObjectSchema
 import io.amichne.konditional.serialization.SchemaValueCodec
-import io.amichne.kontracts.schema.ObjectTraits
+import io.amichne.konditional.serialization.extractSchema
 
 /**
  * Encodes an object-backed [Konstrained] instance to a `Map<String, Any?>` of its field values.
  *
- * This function is only valid for [Konstrained] implementations whose schema implements
- * [ObjectTraits] (i.e. [io.amichne.kontracts.schema.ObjectSchema] or
- * [io.amichne.kontracts.schema.RootObjectSchema]). For primitive/array-backed [Konstrained]
- * use [SchemaValueCodec.encodeKonstrained] instead.
+ * This function is only valid for [Konstrained.Object] implementations. Primitive, array, and adapted
+ * [Konstrained] variants should use [SchemaValueCodec.encodeKonstrained] instead.
  *
- * @throws IllegalArgumentException if the schema is not an object schema.
+ * @throws IllegalArgumentException if the value is not object-backed or its reflective schema
+ *   cannot be extracted.
  */
 @KonditionalInternalApi
-internal fun Konstrained<*>.toPrimitiveMap(): Map<String, Any?> {
-    require(schema is ObjectTraits) {
-        "toPrimitiveMap() is only supported for object-backed Konstrained " +
-            "(schema must implement ObjectTraits, got ${schema::class.simpleName}). " +
-            "For primitive/array schemas use SchemaValueCodec.encodeKonstrained()."
+internal fun Konstrained.toPrimitiveMap(): Map<String, Any?> {
+    require(this is Konstrained.Object) {
+        "toPrimitiveMap() is only supported for object-backed Konstrained values. " +
+            "For primitive, array, or adapted shapes use SchemaValueCodec.encodeKonstrained()."
     }
-    return SchemaValueCodec.encode(this, schema.asObjectSchema())
+    val schema =
+        extractSchema(this::class)
+            ?: error("Cannot extract ObjectSchema from ${this::class.qualifiedName}")
+    return SchemaValueCodec.encode(this, schema)
         .toPrimitiveValue()
         .let { primitive ->
             require(primitive is Map<*, *>) {

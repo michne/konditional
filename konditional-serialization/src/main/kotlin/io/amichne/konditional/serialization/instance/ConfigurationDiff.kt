@@ -6,6 +6,8 @@ import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.context.RampUp
 import io.amichne.konditional.core.FlagDefinition
 import io.amichne.konditional.core.features.Feature
+import io.amichne.konditional.core.instance.Configuration
+import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.internal.SerializedFlagRuleSpec
 import io.amichne.konditional.internal.toSerializedMetadata
 import io.amichne.konditional.internal.toSerializedRules

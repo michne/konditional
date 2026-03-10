@@ -6,13 +6,12 @@ import com.squareup.moshi.JsonClass
 import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.ValueType
 import io.amichne.konditional.core.types.Konstrained
-import io.amichne.konditional.core.types.asObjectSchema
+import io.amichne.konditional.serialization.extractSchema
 import io.amichne.konditional.serialization.SchemaValueCodec
 import io.amichne.konditional.serialization.internal.toJsonValue
 import io.amichne.konditional.serialization.internal.toPrimitiveMap
 import io.amichne.kontracts.dsl.jsonObject
 import io.amichne.kontracts.schema.ObjectSchema
-import io.amichne.kontracts.schema.ObjectTraits
 import io.amichne.kontracts.value.JsonArray
 import io.amichne.kontracts.value.JsonBoolean
 import io.amichne.kontracts.value.JsonNumber
@@ -169,9 +168,9 @@ internal sealed class FlagValue<out T : Any> {
         /**
          * Creates a [FlagValue] from an untyped value by inferring its type.
          *
-         * For [Konstrained] values, dispatches on the schema type:
-         * - Object-backed schemas ([ObjectTraits]) → [DataClassValue]
-         * - Primitive/array-backed schemas → [KonstrainedPrimitive]
+         * For [Konstrained] values:
+         * - [Konstrained.Object] → [DataClassValue]
+         * - Primitive, array, and adapted shapes → [KonstrainedPrimitive]
          */
         fun from(value: Any): FlagValue<*> =
             when (value) {
@@ -184,16 +183,16 @@ internal sealed class FlagValue<out T : Any> {
                         value = value.name,
                         enumClassName = value.javaClass.name,
                     )
-                is Konstrained<*> -> fromKonstrained(value)
+                is Konstrained -> fromKonstrained(value)
                 else -> throw IllegalArgumentException(
                         "Unsupported value type: ${value::class.simpleName}. " +
                             "Supported types: Boolean, String, Int, Double, Enum, Konstrained.",
                     )
             }
 
-        private fun fromKonstrained(value: Konstrained<*>): FlagValue<*> =
+        private fun fromKonstrained(value: Konstrained): FlagValue<*> =
             when {
-                value.schema is ObjectTraits ->
+                value is Konstrained.Object ->
                     DataClassValue(
                         value = value.toPrimitiveMap(),
                         dataClassName = value::class.java.name,
@@ -260,9 +259,11 @@ private fun decodeDataClass(
     expectedSample: Any?,
     schema: ObjectSchema?,
 ): Any =
-    (expectedSample as? Konstrained<*>)?.let { expected ->
+    (expectedSample as? Konstrained.Object)?.let { expected ->
         val expectedClass = expected::class
-        val expectedSchema = schema ?: expected.schema.asObjectSchema()
+        val expectedSchema =
+            schema ?: extractSchema(expected::class)
+                ?: error("Cannot extract ObjectSchema from ${expectedClass.qualifiedName}")
         val jsonObject = toJsonObject(fields, expectedSchema)
         val result = SchemaValueCodec.decode(expectedClass, jsonObject)
         if (result.isSuccess) {

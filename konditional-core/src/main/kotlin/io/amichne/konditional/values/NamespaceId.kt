@@ -21,7 +21,7 @@ value class NamespaceId(override val value: String) : Composable {
     fun seed(): Seed = Seed(value)
 
     @JvmInline
-    value class Seed internal constructor(override val value: String) : Composable {
+    value class Seed(override val value: String) : Composable {
         init {
             validate()
         }

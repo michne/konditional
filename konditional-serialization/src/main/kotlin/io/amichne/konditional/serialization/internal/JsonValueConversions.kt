@@ -39,7 +39,7 @@ internal fun Any?.toJsonValue(): JsonValue =
                 )
             }
 
-        is Konstrained<*> -> SchemaValueCodec.encodeKonstrained(this)
+        is Konstrained -> SchemaValueCodec.encodeKonstrained(this)
         is JsonValue -> this
         is List<*> ->
             jsonArray {

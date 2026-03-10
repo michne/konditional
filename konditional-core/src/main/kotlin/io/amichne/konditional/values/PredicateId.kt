@@ -11,7 +11,7 @@ value class PredicateId(override val value: String) : NonBlank {
     override fun toString(): String = value
 
     companion object {
-        internal fun forRuleInlinePredicate(ruleId: RuleId, ordinal: Int): PredicateId = fromSeed(
+        fun forRuleInlinePredicate(ruleId: RuleId, ordinal: Int): PredicateId = fromSeed(
             "konditional:predicate:inline-rule:${ruleId.value}:${ordinal.coerceAtLeast(0)}",
         )
 

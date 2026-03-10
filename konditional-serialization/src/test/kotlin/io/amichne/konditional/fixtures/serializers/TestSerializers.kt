@@ -3,7 +3,6 @@ package io.amichne.konditional.fixtures.serializers
 import io.amichne.konditional.core.types.Konstrained
 import io.amichne.kontracts.dsl.of
 import io.amichne.kontracts.dsl.schema
-import io.amichne.kontracts.schema.ObjectSchema
 
 /**
  * Common test data class for Konstrained tests.
@@ -14,8 +13,8 @@ data class RetryPolicy(
     val backoffMs: Double = 1000.0,
     val enabled: Boolean = true,
     val mode: String = "exponential",
-) : Konstrained.Object<ObjectSchema> {
-    override val schema: ObjectSchema =
+) : Konstrained.Object {
+    val schema =
         schema {
             ::maxAttempts of { minimum = 1 }
             ::backoffMs of { minimum = 0.0 }
@@ -32,8 +31,8 @@ data class UserSettings(
     val notificationsEnabled: Boolean = true,
     val maxRetries: Int = 3,
     val timeout: Double = 30.0,
-) : Konstrained.Object<ObjectSchema> {
-    override val schema = schema {
+) : Konstrained.Object {
+    val schema = schema {
         ::theme of {
             minLength = 1
             maxLength = 50
@@ -61,6 +60,6 @@ data class UserSettings(
 /**
  * A zero-field config singleton. Useful for testing Kotlin `object` round-trips.
  */
-object DefaultConfig : Konstrained.Object<ObjectSchema> {
-    override val schema: ObjectSchema = schema {}
+object DefaultConfig : Konstrained.Object {
+    val schema = schema {}
 }

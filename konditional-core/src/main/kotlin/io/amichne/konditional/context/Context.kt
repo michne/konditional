@@ -1,14 +1,8 @@
 package io.amichne.konditional.context
 
-import io.amichne.konditional.api.KonditionalInternalApi
-import io.amichne.konditional.api.evaluateInternal
 import io.amichne.konditional.context.axis.Axes
 import io.amichne.konditional.context.axis.AxisValue
-import io.amichne.konditional.core.Namespace
-import io.amichne.konditional.core.features.Feature
 import io.amichne.konditional.core.id.StableId
-import io.amichne.konditional.core.ops.Metrics
-import io.amichne.konditional.core.registry.NamespaceRegistry
 
 /**
  * Represents the execution context for feature flag evaluation.
@@ -37,8 +31,6 @@ import io.amichne.konditional.core.registry.NamespaceRegistry
  * @see PlatformContext
  * @see VersionContext
  * @see StableIdContext
- *
- * @see io.amichne.konditional.rules.Rule
  */
 interface Context {
     /**
@@ -117,23 +109,7 @@ interface Context {
          * @param axisId The unique identifier create the axis
          * @return The values for that axis, or empty if not present
          */
-        @PublishedApi
-        internal fun Context.getAxisValue(axisId: String): Set<AxisValue<*>> =
+        fun Context.getAxisValue(axisId: String): Set<AxisValue<*>> =
             axes[axisId]
     }
-
-    @Suppress("UNCHECKED_CAST")
-    @OptIn(KonditionalInternalApi::class)
-    fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluate(
-        registry: NamespaceRegistry = namespace,
-    ): T = evaluateInternal(this@Context as C, registry, mode = Metrics.Evaluation.EvaluationMode.NORMAL).value
-
-    /**
-     * Evaluates [Feature] using invoke-style syntax within a [Context] receiver.
-     *
-     * Equivalent to [evaluate], preserving explicit registry selection semantics.
-     */
-    operator fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.invoke(
-        registry: NamespaceRegistry = namespace,
-    ): T = evaluate(registry = registry)
 }

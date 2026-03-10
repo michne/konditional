@@ -4,12 +4,12 @@ import com.squareup.moshi.JsonClass
 import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.FlagDefinition
 import io.amichne.konditional.core.features.Feature
+import io.amichne.konditional.core.instance.Configuration
+import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.core.result.ParseError
 import io.amichne.konditional.core.result.parseErrorOrNull
 import io.amichne.konditional.core.result.parseFailure
 import io.amichne.konditional.core.schema.CompiledNamespaceSchema
-import io.amichne.konditional.serialization.instance.Configuration
-import io.amichne.konditional.serialization.instance.ConfigurationMetadata
 import io.amichne.konditional.serialization.options.MissingDeclaredFlagStrategy
 import io.amichne.konditional.serialization.options.SnapshotLoadOptions
 import io.amichne.konditional.serialization.options.SnapshotWarning

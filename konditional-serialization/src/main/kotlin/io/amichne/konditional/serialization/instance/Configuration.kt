@@ -1,12 +1,10 @@
 @file:OptIn(KonditionalInternalApi::class)
 
-package io.amichne.konditional.serialization.instance
+package io.amichne.konditional.core.instance
 
 import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.FlagDefinition
 import io.amichne.konditional.core.features.Feature
-import io.amichne.konditional.core.instance.ConfigurationMetadataView
-import io.amichne.konditional.core.instance.ConfigurationView
 
 data class Configuration(
     override val flags: Map<Feature<*, *, *>, FlagDefinition<*, *, *>>,

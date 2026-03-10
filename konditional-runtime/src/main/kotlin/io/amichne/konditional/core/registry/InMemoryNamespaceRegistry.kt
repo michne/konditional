@@ -7,14 +7,14 @@ import io.amichne.konditional.context.Context
 import io.amichne.konditional.core.FlagDefinition
 import io.amichne.konditional.core.Namespace
 import io.amichne.konditional.core.features.Feature
+import io.amichne.konditional.core.instance.Configuration
+import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.core.instance.ConfigurationMetadataView
 import io.amichne.konditional.core.instance.ConfigurationView
 import io.amichne.konditional.core.ops.Metrics
 import io.amichne.konditional.core.ops.RegistryHooks
 import io.amichne.konditional.internal.SerializedFlagDefinitionMetadata
 import io.amichne.konditional.internal.flagDefinitionFromSerialized
-import io.amichne.konditional.serialization.instance.Configuration
-import io.amichne.konditional.serialization.instance.ConfigurationMetadata
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference

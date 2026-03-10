@@ -22,7 +22,6 @@ import io.amichne.kontracts.dsl.jsonObject
 import io.amichne.kontracts.dsl.jsonValue
 import io.amichne.kontracts.dsl.schema
 import io.amichne.kontracts.dsl.stringSchema
-import io.amichne.kontracts.schema.ObjectSchema
 import io.amichne.kontracts.value.JsonNull
 import io.amichne.kontracts.value.JsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -47,8 +46,8 @@ import kotlin.test.assertIs
 private data class StrictConfig(
     val id: String,
     val count: Int,
-) : Konstrained.Object<ObjectSchema> {
-    override val schema: ObjectSchema =
+) : Konstrained.Object {
+    val schema =
         schema {
             required("id", stringSchema())
             required("count", intSchema())
@@ -59,7 +58,7 @@ private data class StrictConfig(
  * Tests for Konstrained.Object encoding/decoding:
  * - Kotlin `object` singleton round-trip (the fix target)
  * - `data class` encode → decode roundtrip via [SchemaValueCodec.decode]
- * - [SchemaValueCodec.encodeKonstrained] dispatch through ObjectTraits
+ * - [SchemaValueCodec.encodeKonstrained] dispatch through [Konstrained.Object]
  * - Default-value and optional-field behaviour during decode
  */
 class KonstrainedObjectTest {
@@ -130,7 +129,7 @@ class KonstrainedObjectTest {
     }
 
     @Test
-    fun `encodeKonstrained dispatches Konstrained Object singleton through ObjectTraits`() {
+    fun `encodeKonstrained dispatches Konstrained Object singleton through object interface`() {
         val encoded = SchemaValueCodec.encodeKonstrained(DefaultConfig)
         assertTrue(encoded is JsonObject)
         assertEquals(0, (encoded as JsonObject).fields.size)

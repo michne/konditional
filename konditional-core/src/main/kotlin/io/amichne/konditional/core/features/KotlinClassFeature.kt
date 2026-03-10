@@ -8,7 +8,8 @@ import io.amichne.konditional.core.types.Konstrained
  * Sealed interface for custom encodeable feature flags.
  *
  * KotlinClassFeature (despite its name) allows using any custom encodeable type as feature flag values,
- * providing structured, type-safe configuration with full schema validation.
+ * providing structured, type-safe configuration for custom object, primitive, array,
+ * and adapted value shapes.
  *
  * Example:
  * ```kotlin
@@ -16,13 +17,7 @@ import io.amichne.konditional.core.types.Konstrained
  *     val maxRetries: Int = 3,
  *     val timeout: Double = 30.0,
  *     val enabled: Boolean = true
- * ) : Konstrained<ObjectSchema> {
- *     override val schema = schema {
- *         ::maxRetries of { minimum = 0 }
- *         ::timeout of { minimum = 0.0 }
- *         ::enabled of { default = true }
- *     }
- * }
+ * ) : Konstrained.Object
  *
  * object Payments : Namespace("payments") {
  *     val PAYMENT_CONFIG by custom(default = PaymentConfig()) {
@@ -35,7 +30,7 @@ import io.amichne.konditional.core.types.Konstrained
  * @param C The context type used for evaluation
  * @param M The namespace this feature belongs to
  */
-sealed interface KotlinClassFeature<T : Konstrained<*>, C : Context, M : Namespace> :
+sealed interface KotlinClassFeature<T : Konstrained, C : Context, M : Namespace> :
     Feature<T, C, M> {
 
     companion object {
@@ -46,14 +41,14 @@ sealed interface KotlinClassFeature<T : Konstrained<*>, C : Context, M : Namespa
          * @param module The namespace this feature belongs to
          * @return A KotlinClassFeature instance
          */
-        operator fun <T : Konstrained<*>, C : Context, M : Namespace> invoke(
+        operator fun <T : Konstrained, C : Context, M : Namespace> invoke(
             key: String,
             module: M,
         ): KotlinClassFeature<T, C, M> =
             KotlinClassFeatureImpl(key, module)
 
         @PublishedApi
-        internal data class KotlinClassFeatureImpl<T : Konstrained<*>, C : Context, M : Namespace>(
+        internal data class KotlinClassFeatureImpl<T : Konstrained, C : Context, M : Namespace>(
             override val key: String,
             override val namespace: M,
         ) : KotlinClassFeature<T, C, M>, Identifiable.ById by Identifiable.ById(key, namespace.id)

@@ -128,7 +128,6 @@ open class Namespace private constructor(
      * object Auth : Namespace(NamespaceId("auth"))
      * ```
      */
-    @TestOnly
     abstract class TestNamespaceFacade(
         id: String,
         registry: NamespaceRegistry = NamespaceRegistryFactories.default(id),
@@ -293,7 +292,7 @@ open class Namespace private constructor(
      * ```kotlin
      * data class UiConfig(
      *     val variant: String,
-     * ) : Konstrained<UiConfigSchema>
+     * ) : Konstrained.Object
      *
      * object Ui : Namespace("ui") {
      *     val config by custom<UiConfig, Context>(default = UiConfig("control"))
@@ -303,7 +302,7 @@ open class Namespace private constructor(
      * @param default Value used when no rule matches or configuration is absent.
      * @param customScope DSL for rules, rollout, and targeting criteria.
      */
-    protected inline fun <reified T : Konstrained<*>, C : Context> custom(
+    protected inline fun <reified T : Konstrained, C : Context> custom(
         default: T,
         noinline customScope: FlagScope<T, C, Namespace>.() -> Unit = {},
     ): KotlinClassDelegate<T, C> = KotlinClassDelegate(default, customScope)
@@ -462,7 +461,7 @@ open class Namespace private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected class KotlinClassDelegate<T : Konstrained<*>, C : Context>(
+    protected class KotlinClassDelegate<T : Konstrained, C : Context>(
         private val default: T,
         private val configScope: FlagScope<T, C, Namespace>.() -> Unit,
     ) {

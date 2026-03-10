@@ -6,6 +6,7 @@ import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.context.Context
 import io.amichne.konditional.core.FlagDefinition
 import io.amichne.konditional.core.features.Feature
+import io.amichne.konditional.core.instance.Configuration
 
 /**
  * Represents an incremental update to a [Configuration].

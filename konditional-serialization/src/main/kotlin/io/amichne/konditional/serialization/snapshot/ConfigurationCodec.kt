@@ -7,6 +7,8 @@ import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.Namespace
+import io.amichne.konditional.core.instance.Configuration
+import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.core.instance.ConfigurationView
 import io.amichne.konditional.core.result.ParseError
 import io.amichne.konditional.core.result.parseFailure
@@ -25,8 +27,6 @@ import io.amichne.konditional.rules.versions.LeftBound
 import io.amichne.konditional.rules.versions.RightBound
 import io.amichne.konditional.rules.versions.Unbounded
 import io.amichne.konditional.rules.versions.VersionRange
-import io.amichne.konditional.serialization.instance.Configuration
-import io.amichne.konditional.serialization.instance.ConfigurationMetadata
 import io.amichne.konditional.serialization.options.SnapshotLoadOptions
 import io.amichne.konditional.serialization.snapshot.ConfigurationCodec.decode
 import io.amichne.konditional.serialization.snapshot.ConfigurationCodec.encode

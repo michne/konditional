@@ -38,7 +38,7 @@ import java.util.UUID
  * - Moshi serialization / deserialization of [FlagValue.KonstrainedPrimitive]
  * - [ConfigValue.from] dispatches correctly for As* types
  * - Feature flag integration with custom-type Konstrained
- * - Schema default vs explicit override behaviour
+ * - Explicit schema override properties remain available when a type declares one
  */
 class KonstrainedCustomTypeTest {
 
@@ -219,16 +219,7 @@ class KonstrainedCustomTypeTest {
     // =========================================================================
 
     @Test
-    fun `ExpirationDate uses default StringSchema when no override provided`() {
-        val date = ExpirationDate(LocalDate.of(2025, 1, 1))
-        val schema = date.schema
-        // Default schema has no constraints
-        assertEquals(null, schema.format)
-        assertEquals(null, schema.pattern)
-    }
-
-    @Test
-    fun `AuditDate uses overridden StringSchema with format date`() {
+    fun `AuditDate exposes overridden schema property with format date`() {
         val date = AuditDate(LocalDate.of(2025, 1, 1))
         val schema = date.schema
         assertEquals("date", schema.format)

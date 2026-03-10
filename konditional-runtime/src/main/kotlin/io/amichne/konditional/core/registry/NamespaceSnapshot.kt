@@ -2,7 +2,7 @@
 
 package io.amichne.konditional.core.registry
 
-import io.amichne.konditional.serialization.instance.Configuration
+import io.amichne.konditional.core.instance.Configuration
 
 /**
  * An immutable, complete snapshot of a namespace's configuration at a point in time.

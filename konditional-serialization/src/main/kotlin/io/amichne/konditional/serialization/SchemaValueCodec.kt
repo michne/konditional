@@ -6,17 +6,10 @@ package io.amichne.konditional.serialization
 import io.amichne.konditional.core.result.ParseError
 import io.amichne.konditional.core.result.parseFailure
 import io.amichne.konditional.core.types.Konstrained
-import io.amichne.konditional.core.types.asObjectSchema
 import io.amichne.kontracts.dsl.jsonArray
 import io.amichne.kontracts.dsl.jsonObject
 import io.amichne.kontracts.dsl.jsonValue
-import io.amichne.kontracts.schema.ArraySchema
-import io.amichne.kontracts.schema.BooleanSchema
-import io.amichne.kontracts.schema.DoubleSchema
-import io.amichne.kontracts.schema.IntSchema
 import io.amichne.kontracts.schema.ObjectSchema
-import io.amichne.kontracts.schema.ObjectTraits
-import io.amichne.kontracts.schema.StringSchema
 import io.amichne.kontracts.schema.ValidationResult
 import io.amichne.kontracts.value.JsonArray
 import io.amichne.kontracts.value.JsonBoolean
@@ -35,15 +28,18 @@ import kotlin.reflect.full.primaryConstructor
 /**
  * Schema-based serializer that uses reflection and ObjectSchema to encode/decode instances.
  *
- * Supports all [Konstrained] schema variants:
- * - [ObjectSchema] / [io.amichne.kontracts.schema.RootObjectSchema]: data-class encoding via field reflection
- * - [StringSchema], [BooleanSchema], [IntSchema], [DoubleSchema]: single-property primitive extraction
- * - [ArraySchema]: single-property list extraction
+ * Supports all [Konstrained] variants:
+ * - [Konstrained.Object]: data-class encoding via field reflection
+ * - [Konstrained.Primitive.String], [Konstrained.Primitive.Boolean], [Konstrained.Primitive.Int],
+ *   [Konstrained.Primitive.Double]: single-property primitive extraction
+ * - [Konstrained.Array]: single-property list extraction
+ * - [Konstrained.AsString], [Konstrained.AsInt], [Konstrained.AsBoolean], [Konstrained.AsDouble]:
+ *   adapted primitive encoding via explicit instance codecs
  *
  * Any type implementing [Konstrained] can be encoded/decoded without additional registration.
- * For primitive and array schemas the implementing class must have exactly one property of
- * the matching Kotlin type; `@JvmInline value class` is the idiomatic way to guarantee this
- * at the language level.
+ * For primitive and array-backed values the implementing class must have exactly one property of the
+ * matching Kotlin type; `@JvmInline value class` is the idiomatic way to guarantee this at the
+ * language level.
  */
 internal enum class SingletonUnknownFieldMode {
     REJECT_UNKNOWN_FIELDS,
@@ -98,30 +94,24 @@ internal object SchemaValueCodec {
      *   implementing class does not have the required single-property structure for
      *   primitive/array schemas.
      */
-    fun encodeKonstrained(konstrained: Konstrained<*>): JsonValue =
+    fun encodeKonstrained(konstrained: Konstrained): JsonValue =
         when {
-            // Adapted family: domain type T → JSON primitive via the instance's encode().
             konstrained is Konstrained.AsString<*, *> -> jsonValue { string(konstrained.encode()) }
             konstrained is Konstrained.AsInt<*, *> -> jsonValue { number(konstrained.encode()) }
             konstrained is Konstrained.AsBoolean<*, *> -> jsonValue { boolean(konstrained.encode()) }
             konstrained is Konstrained.AsDouble<*, *> -> jsonValue { number(konstrained.encode()) }
+            konstrained is Konstrained.Object -> encode(konstrained, extractObjectSchema(konstrained))
+            konstrained is Konstrained.Primitive.String ->
+                jsonValue { string(konstrained.extractSinglePrimitiveProperty()) }
+            konstrained is Konstrained.Primitive.Boolean ->
+                jsonValue { boolean(konstrained.extractSinglePrimitiveProperty()) }
+            konstrained is Konstrained.Primitive.Int ->
+                jsonValue { number(konstrained.extractSinglePrimitiveProperty<Int>()) }
+            konstrained is Konstrained.Primitive.Double ->
+                jsonValue { number(konstrained.extractSinglePrimitiveProperty<Double>()) }
+            konstrained is Konstrained.Array<*> -> encodeKonstrainedArray(konstrained)
             else ->
-                when (val schema = konstrained.schema) {
-                    is ObjectTraits -> encode(konstrained, schema.asObjectSchema())
-                    is StringSchema -> jsonValue { string(konstrained.extractSinglePrimitiveProperty()) }
-                    is BooleanSchema -> jsonValue { boolean(konstrained.extractSinglePrimitiveProperty()) }
-                    is IntSchema -> jsonValue { number(konstrained.extractSinglePrimitiveProperty<Int>()) }
-                    is DoubleSchema -> jsonValue { number(konstrained.extractSinglePrimitiveProperty<Double>()) }
-                    is ArraySchema<*> -> encodeKonstrainedArray(konstrained)
-                    else ->
-                        error(
-                            "Unsupported schema type for Konstrained encoding: ${schema::class.simpleName}. " +
-                                "Supported: ObjectSchema, RootObjectSchema, StringSchema, BooleanSchema, " +
-                                "IntSchema, DoubleSchema, ArraySchema. " +
-                                "For non-primitive domain types implement Konstrained.AsString / AsInt / " +
-                                "AsBoolean / AsDouble and supply a companion Konstrained.Decoder.",
-                        )
-                }
+                error("Unsupported Konstrained subtype: ${konstrained::class.qualifiedName}")
         }
 
     /**
@@ -249,32 +239,33 @@ internal object SchemaValueCodec {
             is Int -> jsonValue { number(value) }
             is Double -> jsonValue { number(value) }
             is Enum<*> -> jsonValue { string(value.name) }
-            is Konstrained<*> -> encodeKonstrained(value)
+            is Konstrained -> encodeKonstrained(value)
             else ->
                 error(
                     "Unsupported type for encoding: ${value::class.qualifiedName}. " +
                         "Supported built-in types: Boolean, String, Int, Double, Enum. " +
-                        "Custom types must implement Konstrained<S> where S is a supported schema.",
+                        "Custom types must implement Konstrained.",
                 )
         }
 
-    private fun encodeKonstrainedArray(konstrained: Konstrained<*>): JsonArray {
+    private fun extractObjectSchema(konstrained: Konstrained.Object): ObjectSchema =
+        extractSchema(konstrained::class)
+            ?: error("Cannot extract ObjectSchema from ${konstrained::class.qualifiedName}")
+
+    private fun encodeKonstrainedArray(konstrained: Konstrained.Array<*>): JsonArray {
         val kClass = konstrained::class
-        // Filter to List-typed properties only — this excludes the `schema` property inherited
-        // from Konstrained<*> and any other non-list fields, matching the same pattern used by
-        // extractSinglePrimitiveProperty for scalar schemas.
         val listProps = kClass.memberProperties.filter { it.returnType.classifier == List::class }
         val prop =
             listProps.singleOrNull()
                 ?: error(
-                    "${kClass.simpleName} must have exactly one List-typed property for ArraySchema backing " +
+                    "${kClass.simpleName} must have exactly one List-typed property for array-backed Konstrained " +
                         "(found ${listProps.size}: ${listProps.map { it.name }}). " +
                         "Consider using @JvmInline value class.",
                 )
         val list =
             prop.call(konstrained) as? List<*>
                 ?: error(
-                    "${kClass.simpleName}.${prop.name} must be a List for ArraySchema backing.",
+                    "${kClass.simpleName}.${prop.name} must be a List for array-backed Konstrained.",
                 )
         return jsonArray {
             elements(list.map { element -> element.toJsonValue() })
@@ -612,12 +603,9 @@ private fun KClass<*>.isIntKonstrained(): Boolean =
  * if only one exists. Throws with a clear message if zero or multiple candidates are found,
  * directing users toward `@JvmInline value class`.
  */
-private inline fun <reified T : Any> Konstrained<*>.extractSinglePrimitiveProperty(): T {
+private inline fun <reified T : Any> Konstrained.extractSinglePrimitiveProperty(): T {
     val kClass = this::class
-    val allProps =
-        kClass.memberProperties
-            .filterNot { it.name == "schema" }
-            .toList()
+    val allProps = kClass.memberProperties.toList()
 
     val primaryConstructorProp =
         kClass.primaryConstructor

@@ -2,7 +2,7 @@ package io.amichne.konditional.internal.serialization.models
 
 import com.squareup.moshi.JsonClass
 import io.amichne.konditional.api.KonditionalInternalApi
-import io.amichne.konditional.serialization.instance.ConfigurationMetadata
+import io.amichne.konditional.core.instance.ConfigurationMetadata
 
 @KonditionalInternalApi
 @JsonClass(generateAdapter = true)

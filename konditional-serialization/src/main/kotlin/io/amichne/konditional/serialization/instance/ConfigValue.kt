@@ -6,7 +6,6 @@ import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.core.types.Konstrained
 import io.amichne.konditional.serialization.SchemaValueCodec
 import io.amichne.konditional.serialization.internal.toPrimitiveMap
-import io.amichne.kontracts.schema.ObjectTraits
 
 sealed interface ConfigValue {
     @ConsistentCopyVisibility
@@ -60,7 +59,7 @@ sealed interface ConfigValue {
                 is Int -> IntValue(value)
                 is Double -> DoubleValue(value)
                 is Enum<*> -> EnumValue(value.javaClass.name, value.name)
-                is Konstrained<*> -> fromKonstrained(value)
+                is Konstrained -> fromKonstrained(value)
                 else ->
                     Opaque(
                         typeName = value::class.qualifiedName ?: value::class.simpleName ?: "unknown",
@@ -68,9 +67,9 @@ sealed interface ConfigValue {
                     )
             }
 
-        private fun fromKonstrained(value: Konstrained<*>): ConfigValue =
+        private fun fromKonstrained(value: Konstrained): ConfigValue =
             when {
-                value.schema is ObjectTraits ->
+                value is Konstrained.Object ->
                     DataClassValue(
                         dataClassName = value::class.java.name,
                         fields = value.toPrimitiveMap(),

@@ -1,48 +1,76 @@
-@file:OptIn(KonditionalInternalApi::class)
-
 package io.amichne.konditional.serialization
 
-import io.amichne.konditional.api.KonditionalInternalApi
-import io.amichne.konditional.core.types.Konstrained
-import io.amichne.konditional.core.types.asObjectSchema
+import io.amichne.kontracts.dsl.objectSchema
 import io.amichne.kontracts.schema.JsonSchema
 import io.amichne.kontracts.schema.ObjectSchema
+import io.amichne.kontracts.schema.RootObjectSchema
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.memberProperties
 
 /**
- * Extracts an ObjectSchema from a KClass that implements Konstrained.
+ * Extracts an [ObjectSchema] from a Kotlin class by reflecting an optional `schema` property.
  *
- * Attempts multiple strategies to obtain the schema:
- * 1. Object instance (for singleton objects)
- * 2. No-arg constructor (for data classes with defaults)
- * 3. Companion object property (if schema is defined statically)
- *
- * @param kClass The class to extract schema from
- * @return ObjectSchema if found, null otherwise
+ * The lookup order is:
+ * 1. Kotlin `object` instance
+ * 2. No-arg/default constructor instance
+ * 3. Companion object property
  */
 internal fun extractSchema(kClass: KClass<*>): ObjectSchema? {
-    val schemaFromObject =
-        (kClass.objectInstance as? Konstrained<*>)?.schema.asObjectSchemaOrNull()
+    val schemaFromObject = extractSchemaProperty(kClass.objectInstance)
 
     val schemaFromConstructor =
-        runCatching { (kClass.createInstance() as? Konstrained<*>)?.schema }
+        runCatching { kClass.createInstance() }
             .getOrNull()
-            .asObjectSchemaOrNull()
+            ?.let(::extractSchemaProperty)
 
     val schemaFromCompanion =
         kClass.companionObjectInstance
             ?.let { instance ->
                 kClass.companionObject
-                    ?.members
+                    ?.memberProperties
                     ?.firstOrNull { it.name == "schema" }
-                    ?.call(instance)
-            }.asObjectSchemaOrNull()
+                    ?.let { property -> readSchemaProperty(property, instance) }
+            }
 
     return schemaFromObject ?: schemaFromConstructor ?: schemaFromCompanion
 }
+
+private fun extractSchemaProperty(instance: Any?): ObjectSchema? =
+    instance
+        ?.let { candidate ->
+            candidate::class.memberProperties
+                .firstOrNull { it.name == "schema" }
+                ?.let { property -> readSchemaProperty(property, candidate) }
+        }
+
+private fun readSchemaProperty(
+    property: KProperty1<out Any, *>,
+    instance: Any,
+): ObjectSchema? =
+    runCatching { property.getter.call(instance) }
+        .getOrNull()
+        .asObjectSchemaOrNull()
+
+internal fun JsonSchema<*>.asObjectSchema(): ObjectSchema =
+    when (this) {
+        is ObjectSchema -> this
+        is RootObjectSchema ->
+            objectSchema {
+                fields = this@asObjectSchema.fields
+                title = this@asObjectSchema.title
+                description = this@asObjectSchema.description
+                default = this@asObjectSchema.default
+                nullable = this@asObjectSchema.nullable
+                example = this@asObjectSchema.example
+                deprecated = this@asObjectSchema.deprecated
+                required = this@asObjectSchema.required
+            }
+        else -> throw IllegalArgumentException("Expected an object schema, got ${this::class.qualifiedName}")
+    }
 
 private fun Any?.asObjectSchemaOrNull(): ObjectSchema? =
     (this as? JsonSchema<*>)?.let { schema ->
