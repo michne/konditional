@@ -11,6 +11,7 @@ import io.amichne.konditional.core.instance.Configuration
 import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.core.registry.InMemoryNamespaceRegistry
 import io.amichne.konditional.fixtures.TestContext
+import io.amichne.konditional.fixtures.TestNamespaceFacade
 import io.amichne.konditional.fixtures.TestEnvironment
 import io.amichne.konditional.fixtures.productionContext
 import kotlin.test.Test
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference
 class NamespaceRuntimeTest {
     @Test
     fun declaredDefinitionsLoadAutomaticallyAndKillSwitchUsesAtomicSnapshotState() {
-        val namespace = object : Namespace.TestNamespaceFacade("engine-kill-switch") {
+        val namespace = object : TestNamespaceFacade("engine-kill-switch") {
             val enabled by boolean<Context>(default = false) {
                 enable { platforms(Platform.IOS) }
             }
@@ -49,10 +50,10 @@ class NamespaceRuntimeTest {
 
     @Test
     fun namespaceIsolationAndRollbackRemainCoherent() {
-        val namespaceA = object : Namespace.TestNamespaceFacade("engine-a") {
+        val namespaceA = object : TestNamespaceFacade("engine-a") {
             val number by integer<Context>(default = 1)
         }
-        val namespaceB = object : Namespace.TestNamespaceFacade("engine-b") {
+        val namespaceB = object : TestNamespaceFacade("engine-b") {
             val number by integer<Context>(default = 2)
         }
 
@@ -78,7 +79,7 @@ class NamespaceRuntimeTest {
 
     @Test
     fun rampUpBucketingIsDeterministicForStableId() {
-        val namespace = object : Namespace.TestNamespaceFacade("engine-ramp-up") {
+        val namespace = object : TestNamespaceFacade("engine-ramp-up") {
             val rollout by boolean<Context>(default = false) {
                 enable {
                     rampUp { 50 }
@@ -96,7 +97,7 @@ class NamespaceRuntimeTest {
 
     @Test
     fun readersOnlyObserveWholeSnapshotsDuringConcurrentLoads() {
-        val namespace = object : Namespace.TestNamespaceFacade("engine-atomic") {
+        val namespace = object : TestNamespaceFacade("engine-atomic") {
             val primary by integer<Context>(default = 0)
             val mirror by integer<Context>(default = 0)
         }

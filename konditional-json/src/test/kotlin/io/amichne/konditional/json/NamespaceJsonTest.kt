@@ -10,6 +10,7 @@ import io.amichne.konditional.core.result.ParseError
 import io.amichne.konditional.core.result.ParseResult
 import io.amichne.konditional.fixtures.RetryPolicy
 import io.amichne.konditional.fixtures.TestContext
+import io.amichne.konditional.fixtures.TestNamespaceFacade
 import io.amichne.konditional.serialization.fromJson
 import io.amichne.konditional.serialization.toJson
 import io.amichne.konditional.values.FeatureId
@@ -26,7 +27,7 @@ class NamespaceJsonTest {
 
     @Test
     fun strictRoundTripPreservesPrimitiveEnumAndKonstrainedValues() {
-        val namespace = object : Namespace.TestNamespaceFacade("json-roundtrip") {
+        val namespace = object : TestNamespaceFacade("json-roundtrip") {
             val enabled by boolean<Context>(default = false)
             val theme by enum<Theme, Context>(default = Theme.LIGHT)
             val retryPolicy by custom<RetryPolicy, Context>(default = RetryPolicy())
@@ -58,7 +59,7 @@ class NamespaceJsonTest {
 
     @Test
     fun unknownFeatureKeyFailsStrictlyAndLeavesCurrentStateUntouched() {
-        val namespace = object : Namespace.TestNamespaceFacade("json-strict") {
+        val namespace = object : TestNamespaceFacade("json-strict") {
             val enabled by boolean<Context>(default = false)
         }
 
@@ -83,7 +84,7 @@ class NamespaceJsonTest {
 
     @Test
     fun invalidKonstrainedPayloadFailsStrictly() {
-        val namespace = object : Namespace.TestNamespaceFacade("json-konstrained") {
+        val namespace = object : TestNamespaceFacade("json-konstrained") {
             val retryPolicy by custom<RetryPolicy, Context>(default = RetryPolicy())
         }
 
@@ -117,7 +118,7 @@ class NamespaceJsonTest {
 
     @Test
     fun malformedJsonFailsWithTypedBoundaryError() {
-        val namespace = object : Namespace.TestNamespaceFacade("json-invalid") {
+        val namespace = object : TestNamespaceFacade("json-invalid") {
             val enabled by boolean<Context>(default = false)
         }
 

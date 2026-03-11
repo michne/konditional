@@ -3,7 +3,6 @@ package io.amichne.konditional.core.features
 import io.amichne.konditional.values.FeatureId
 import io.amichne.konditional.values.IdentifierEncoding.SEPARATOR
 import io.amichne.konditional.values.NamespaceId
-import io.amichne.konditional.values.Validateable
 
 /**
  * Root identity interface for all typed identities in this codebase.
@@ -34,14 +33,16 @@ interface Identifiable {
      * For `@JvmInline value class` types this is especially important: without an explicit
      * override the compiler generates `ClassName(value)` instead of the bare value string.
      */
-    interface Named : Identifiable, Validateable {
+    interface Named : Identifiable {
         val value: String
+
+        fun validate(): Named
 
         /**
          * Requires [value] to be non-blank.
          */
         interface NonBlank : Named {
-            override fun validate() = apply {
+            override fun validate(): NonBlank = apply {
                 require(value.isNotBlank()) { "${this::class.simpleName} must not be blank" }
             }
         }
@@ -51,7 +52,7 @@ interface Identifiable {
          * in composite identifiers.
          */
         interface Composable : NonBlank {
-            override fun validate() = apply {
+            override fun validate(): Composable = apply {
                 super<NonBlank>.validate()
                 require(!value.contains(SEPARATOR)) {
                     "${this::class.simpleName} must not contain '$SEPARATOR': '$value'"

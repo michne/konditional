@@ -7,7 +7,6 @@ import io.amichne.konditional.api.KonditionalInternalApi
 import io.amichne.konditional.context.Context
 import io.amichne.konditional.context.axis.KonditionalExplicitId
 import io.amichne.konditional.core.Namespace
-import io.amichne.konditional.core.dsl.rules.ContextRuleScope
 import io.amichne.konditional.core.dsl.rules.NamespaceRuleSet
 import io.amichne.konditional.core.dsl.rules.RuleScope
 import io.amichne.konditional.core.dsl.rules.RuleSet
@@ -42,28 +41,6 @@ fun <C : Context, M : Namespace> FlagScope<Boolean, C, M>.enable(build: RuleScop
  */
 fun <C : Context, M : Namespace> FlagScope<Boolean, C, M>.disable(build: RuleScope<C>.() -> Unit = {}) =
     rule(DISABLED, build)
-
-/**
- * Defines a boolean rule that yields `true` using a composable rule scope.
- *
- * This is syntactic sugar for `ruleScoped(true) { ... }`.
- *
- * @param build DSL block for configuring composable targeting criteria
- */
-@KonditionalInternalApi
-fun <C : Context, M : Namespace> FlagScope<Boolean, C, M>.enableScoped(build: ContextRuleScope<C>.() -> Unit = {}) =
-    ruleScoped(ENABLED, build)
-
-/**
- * Defines a boolean rule that yields `false` using a composable rule scope.
- *
- * This is syntactic sugar for `ruleScoped(false) { ... }`.
- *
- * @param build DSL block for configuring composable targeting criteria
- */
-@KonditionalInternalApi
-fun <C : Context, M : Namespace> FlagScope<Boolean, C, M>.disableScoped(build: ContextRuleScope<C>.() -> Unit = {}) =
-    ruleScoped(DISABLED, build)
 
 /**
  * Builds a rule set scoped to this feature using the feature's declared context type.

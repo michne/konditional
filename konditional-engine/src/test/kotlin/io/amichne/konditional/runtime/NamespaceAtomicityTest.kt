@@ -8,6 +8,7 @@ import io.amichne.konditional.core.instance.Configuration
 import io.amichne.konditional.core.instance.ConfigurationMetadata
 import io.amichne.konditional.core.registry.InMemoryNamespaceRegistry
 import io.amichne.konditional.fixtures.TestContext
+import io.amichne.konditional.fixtures.TestNamespaceFacade
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -104,7 +105,7 @@ class NamespaceAtomicityTest {
 
     private class AtomicNamespace(
         registry: InMemoryNamespaceRegistry,
-    ) : Namespace.TestNamespaceFacade(
+    ) : TestNamespaceFacade(
             id = "atomic",
             registry = registry,
             identifierSeed = "atomic-seed",

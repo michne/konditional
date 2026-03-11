@@ -94,18 +94,6 @@ internal fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInte
     return result
 }
 
-/**
- * Internal evaluation entrypoint used by sibling modules (e.g. shadow evaluation).
- *
- * Prefer [evaluate] / [explain] for application usage.
- */
-@KonditionalInternalApi
-fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInternalApi(
-    context: C,
-    registry: NamespaceRegistry,
-    mode: Metrics.Evaluation.EvaluationMode,
-): EvaluationDiagnostics<T> = evaluateInternal(context, registry, mode)
-
 @OptIn(KonditionalInternalApi::class)
 private fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.createBaseDiagnostics(
     context: C,

@@ -19,13 +19,12 @@ import io.amichne.konditional.core.spi.FeatureRegistrationHooks
 import io.amichne.konditional.core.types.Konstrained
 import io.amichne.konditional.internal.builders.FlagBuilder
 import io.amichne.konditional.values.NamespaceId
-import java.util.UUID
 import kotlin.reflect.KProperty
 
 /**
  * Namespace-scoped feature container with atomic runtime state.
  */
-open class Namespace private constructor(
+open class Namespace @PublishedApi internal constructor(
     val id: NamespaceId = defaultNamespaceId(),
     @property:KonditionalInternalApi
     val registry: NamespaceRegistry = InMemoryNamespaceRegistry(namespaceId = id.value),
@@ -39,7 +38,7 @@ open class Namespace private constructor(
     private val declaredDefaults = linkedMapOf<Feature<*, *, *>, Any>()
     private val declaredDefinitions = linkedMapOf<Feature<*, *, *>, FlagDefinition<*, *, *>>()
 
-    fun allFeatures(): List<Feature<*, *, *>> = features.toList()
+    internal fun allFeatures(): List<Feature<*, *, *>> = features.toList()
 
     @KonditionalInternalApi
     fun declaredDefault(feature: Feature<*, *, *>): Any? = declaredDefaults[feature]
@@ -251,18 +250,6 @@ open class Namespace private constructor(
 
         operator fun <M : Namespace> getValue(thisRef: M, property: KProperty<*>): KotlinClassFeature<T, C, M> =
             feature as KotlinClassFeature<T, C, M>
-    }
-
-    abstract class TestNamespaceFacade(
-        id: String,
-        registry: NamespaceRegistry = InMemoryNamespaceRegistry(namespaceId = id),
-        identifierSeed: String = UUID.randomUUID().toString(),
-    ) : Namespace(
-            id = NamespaceId(id),
-            registry = registry,
-            identifierSeed = NamespaceId.Seed(identifierSeed),
-        ) {
-        constructor(id: NamespaceId) : this(id = id.value)
     }
 
     override fun equals(other: Any?): Boolean =

@@ -4,24 +4,25 @@ import io.amichne.kontracts.dsl.custom.CustomBooleanSchemaBuilder
 import io.amichne.kontracts.dsl.custom.CustomDoubleSchemaBuilder
 import io.amichne.kontracts.dsl.custom.CustomIntSchemaBuilder
 import io.amichne.kontracts.dsl.custom.CustomStringSchemaBuilder
+import io.amichne.kontracts.schema.FieldSchema
 import kotlin.reflect.KProperty0
 
 context(root: RootObjectSchemaBuilder)
 @PublishedApi
 @JsonSchemaBuilderDsl
-internal inline fun <B : JsonSchemaBuilder<Any>> KProperty0<*>.registerCustomSchema(
+internal fun <B : JsonSchemaBuilder<Any>> KProperty0<*>.registerCustomSchema(
     builder: B,
     required: Boolean,
     configure: B.() -> Unit,
 ) {
     val schema = builder.apply(configure).build()
-    root.fields[name] = fieldSchema {
-        this.schema = schema
-        this.required = required
-        this.defaultValue = schema.default
-        this.description = schema.description
-        this.deprecated = schema.deprecated
-    }
+    root.fields[name] = FieldSchema(
+        schema = schema,
+        required = required,
+        defaultValue = schema.default,
+        description = schema.description,
+        deprecated = schema.deprecated,
+    )
 }
 
 /**
@@ -43,7 +44,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asString")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V>.asString(
-    builder: CustomStringSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomStringSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(
         CustomStringSchemaBuilder(),
@@ -60,7 +61,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asNullableString")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V?>.asString(
-    builder: CustomStringSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomStringSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(CustomStringSchemaBuilder<V>(), required = false) {
         nullable = true
@@ -86,7 +87,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asInt")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V>.asInt(
-    builder: CustomIntSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomIntSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(
         CustomIntSchemaBuilder(),
@@ -103,7 +104,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asNullableInt")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V?>.asInt(
-    @JsonSchemaBuilderDsl builder: CustomIntSchemaBuilder<V>.() -> Unit,
+    @JsonSchemaBuilderDsl noinline builder: CustomIntSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(CustomIntSchemaBuilder<V>(), required = false) {
         nullable = true
@@ -128,7 +129,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asBoolean")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V>.asBoolean(
-    builder: CustomBooleanSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomBooleanSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(
         CustomBooleanSchemaBuilder(),
@@ -145,7 +146,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asNullableBoolean")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V?>.asBoolean(
-    builder: CustomBooleanSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomBooleanSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(CustomBooleanSchemaBuilder<V>(), required = false) {
         nullable = true
@@ -172,7 +173,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asDouble")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V>.asDouble(
-    builder: CustomDoubleSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomDoubleSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(
         CustomDoubleSchemaBuilder(),
@@ -189,7 +190,7 @@ context(root: RootObjectSchemaBuilder)
 @JvmName("asNullableDouble")
 @JsonSchemaBuilderDsl
 inline infix fun <reified V : Any> KProperty0<V?>.asDouble(
-    builder: CustomDoubleSchemaBuilder<V>.() -> Unit,
+    noinline builder: CustomDoubleSchemaBuilder<V>.() -> Unit,
 ) {
     registerCustomSchema(CustomDoubleSchemaBuilder<V>(), required = false) {
         nullable = true

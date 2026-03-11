@@ -41,7 +41,7 @@ sealed interface KotlinClassFeature<T : Konstrained, C : Context, M : Namespace>
          * @param module The namespace this feature belongs to
          * @return A KotlinClassFeature instance
          */
-        operator fun <T : Konstrained, C : Context, M : Namespace> invoke(
+        internal operator fun <T : Konstrained, C : Context, M : Namespace> invoke(
             key: String,
             module: M,
         ): KotlinClassFeature<T, C, M> =

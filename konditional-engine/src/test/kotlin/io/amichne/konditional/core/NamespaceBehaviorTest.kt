@@ -6,6 +6,7 @@ import io.amichne.konditional.context.axis.axes
 import io.amichne.konditional.core.dsl.enable
 import io.amichne.konditional.core.dsl.rules.targeting.scopes.constrain
 import io.amichne.konditional.fixtures.TestContext
+import io.amichne.konditional.fixtures.TestNamespaceFacade
 import io.amichne.konditional.fixtures.TestEnvironment
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,17 +40,17 @@ class NamespaceBehaviorTest {
         assertFalse(AxisFlags.prodOnly.evaluate(stage))
     }
 
-    private object CheckoutFlags : Namespace.TestNamespaceFacade("checkout") {
+    private object CheckoutFlags : TestNamespaceFacade("checkout") {
         val enabled by boolean<TestContext>(default = false) {
             enable { ios() }
         }
     }
 
-    private object BillingFlags : Namespace.TestNamespaceFacade("billing") {
+    private object BillingFlags : TestNamespaceFacade("billing") {
         val enabled by boolean<TestContext>(default = false)
     }
 
-    private object AxisFlags : Namespace.TestNamespaceFacade("axis") {
+    private object AxisFlags : TestNamespaceFacade("axis") {
         val prodOnly by boolean<TestContext>(default = false) {
             enable { constrain(TestEnvironment.PROD) }
         }

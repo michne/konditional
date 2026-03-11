@@ -8,6 +8,7 @@ import io.amichne.konditional.core.result.ParseError
 import io.amichne.konditional.core.result.ParseResult
 import io.amichne.konditional.fixtures.RetryPolicy
 import io.amichne.konditional.fixtures.TestContext
+import io.amichne.konditional.fixtures.TestNamespaceFacade
 import io.amichne.konditional.values.FeatureId
 import io.amichne.konditional.values.NamespaceId
 import kotlin.test.Test
@@ -63,7 +64,7 @@ class ConfigurationCodecTest {
         assertFalse(SecondaryFlags.enabled.evaluate(TestContext(platform = Platform.IOS)))
     }
 
-    private object SerializableFlags : Namespace.TestNamespaceFacade("json-main") {
+    private object SerializableFlags : TestNamespaceFacade("json-main") {
         val enabled by boolean<TestContext>(default = false) {
             rule(true) { ios() }
         }
@@ -77,7 +78,7 @@ class ConfigurationCodecTest {
         }
     }
 
-    private object SecondaryFlags : Namespace.TestNamespaceFacade("json-secondary") {
+    private object SecondaryFlags : TestNamespaceFacade("json-secondary") {
         val enabled by boolean<Context>(default = false)
     }
 

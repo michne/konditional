@@ -48,7 +48,4 @@ interface NamespaceRegistry {
         key: Feature<T, C, M>,
     ): FlagDefinition<T, C, M>? =
         configuration.flags[key] as? FlagDefinition<T, C, M>
-
-    fun allFlags(): Map<Feature<*, *, *>, FlagDefinition<*, *, *>> =
-        configuration.flags
 }
