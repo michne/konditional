@@ -11,7 +11,6 @@ konditionalPublishing {
 
 dependencies {
     api(project(":konditional-types"))
-    api(project(":kontracts"))
     implementation(kotlin("reflect"))
 
     testImplementation(kotlin("test"))
