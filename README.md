@@ -97,10 +97,12 @@ You do not need it to declare flags and call `evaluate(...)`.
 
 ## Learn by path
 
-The documentation stays intentionally small for evaluation and early adoption.
+The documentation is organized around evaluation, adoption, and trustworthy
+runtime behavior.
 
-- [Overview](docs/index.md)
-- [Quickstart: evaluate a typed eligibility flag](docs/quickstart/typed-eligibility.md)
+- [Home](docs/index.md)
+- [Start here](docs/start-here/index.md)
+- [Quickstart](docs/quickstart/index.md)
 
 ## Contributing and project docs
 

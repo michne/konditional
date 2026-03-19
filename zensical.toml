@@ -45,9 +45,14 @@ Copyright &copy; 2026 Austin Michne
 #
 # Read more: https://zensical.org/docs/setup/navigation/
 nav = [
-  { "Overview" = "index.md" },
-  { "Quickstart" = [{ "Evaluate a typed eligibility flag" = "quickstart/typed-eligibility.md" }] },
-  { "Reference" = [{ "Build, docs, and release workflow" = "reference-build-and-release.md" }] },
+  { "Home" = "index.md" },
+  { "Start here" = [{ "Overview" = "start-here/index.md" }, { "Why Konditional" = "start-here/why-konditional.md" }, { "When it fits" = "start-here/when-it-fits.md" }, { "Trade-offs and non-goals" = "start-here/trade-offs-and-non-goals.md" }, { "Comparison" = "start-here/comparison.md" }, { "Adoption path" = "start-here/adoption-path.md" }] },
+  { "Quickstart" = [{ "Overview" = "quickstart/index.md" }, { "Install" = "quickstart/install.md" }, { "Define your first namespace" = "quickstart/define-first-namespace.md" }, { "Evaluate a typed flag" = "quickstart/evaluate-a-typed-flag.md" }, { "Add ramp-up" = "quickstart/add-ramp-up.md" }, { "Load JSON safely" = "quickstart/load-json-safely.md" }, { "Verify behavior" = "quickstart/verify-behavior.md" }] },
+  { "Concepts" = [{ "Overview" = "concepts/index.md" }, { "Namespaces" = "concepts/namespaces.md" }, { "Typed features" = "concepts/typed-features.md" }, { "Context and axes" = "concepts/context-and-axes.md" }, { "Rules and precedence" = "concepts/rules-and-precedence.md" }, { "Runtime snapshots" = "concepts/runtime-snapshots.md" }, { "JSON boundary" = "concepts/json-boundary.md" }] },
+  { "Guides" = [{ "Overview" = "guides/index.md" }, { "Remote configuration" = "guides/remote-configuration.md" }, { "Custom Konstrained values" = "guides/custom-konstrained-values.md" }, { "Custom axes" = "guides/custom-axes.md" }, { "Testing strategies" = "guides/testing-strategies.md" }, { "Migrating from string flags" = "guides/migrating-from-string-flags.md" }] },
+  { "Guarantees" = [{ "Overview" = "guarantees/index.md" }, { "Type safety" = "guarantees/type-safety.md" }, { "Determinism" = "guarantees/determinism.md" }, { "Namespace isolation" = "guarantees/namespace-isolation.md" }, { "Atomic snapshots" = "guarantees/atomic-snapshots.md" }, { "Parse boundary" = "guarantees/parse-boundary.md" }] },
+  { "Reference" = [{ "Overview" = "reference/index.md" }, { "Module dependency map" = "reference/module-dependency-map.md" }, { "API surface" = "reference/api-surface.md" }, { "Snapshot JSON format" = "reference/snapshot-json-format.md" }, { "Evaluation diagnostics" = "reference/evaluation-diagnostics.md" }, { "Build, docs, and release" = "reference/build-docs-and-release.md" }] },
+  { "Appendix" = [{ "Overview" = "appendix/index.md" }, { "Glossary" = "appendix/glossary.md" }, { "FAQ" = "appendix/faq.md" }] },
 ]
 
 # With the "extra_css" option you can add your own CSS styling to customize
