@@ -1,6 +1,12 @@
 plugins {
-    kotlin("jvm")
+    id("konditional.published-library")
     `java-test-fixtures`
+}
+
+konditionalPublishing {
+    artifactId.set("konditional-engine")
+    moduleName.set("Konditional Engine")
+    moduleDescription.set("Deterministic namespace evaluation and registry semantics.")
 }
 
 dependencies {

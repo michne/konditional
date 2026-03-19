@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("konditional.jvm-module")
 }
 
 dependencies {

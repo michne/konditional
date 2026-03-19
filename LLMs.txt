@@ -44,4 +44,4 @@ This file provides a compact map of high-value documentation pages for LLM-based
 
 ## Repository
 - https://github.com/amichne/konditional
-- Docs source path: https://github.com/amichne/konditional/tree/main/docusaurus
+- Docs source path: https://github.com/amichne/konditional/tree/main/docs

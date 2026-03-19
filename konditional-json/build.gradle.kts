@@ -1,5 +1,11 @@
 plugins {
-    kotlin("jvm")
+    id("konditional.published-library")
+}
+
+konditionalPublishing {
+    artifactId.set("konditional-json")
+    moduleName.set("Konditional Json")
+    moduleDescription.set("Strict Moshi codecs and typed JSON snapshot parsing.")
 }
 
 dependencies {

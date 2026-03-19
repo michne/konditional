@@ -47,6 +47,7 @@ Copyright &copy; 2026 Austin Michne
 nav = [
   { "Overview" = "index.md" },
   { "Quickstart" = [{ "Evaluate a typed eligibility flag" = "quickstart/typed-eligibility.md" }] },
+  { "Reference" = [{ "Build, docs, and release workflow" = "reference-build-and-release.md" }] },
 ]
 
 # With the "extra_css" option you can add your own CSS styling to customize
