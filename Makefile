@@ -158,7 +158,7 @@ docs-install: ## Install Zensical into docs/venv
 
 docs-build: docs-install ## Build the Zensical docs site
 	@echo "$(BLUE)Building Zensical site...$(NC)"
-	@$(ZENSICAL) build
+	@$(ZENSICAL) build --clean
 	@echo "$(GREEN)Zensical site built successfully$(NC)"
 
 docs-serve: docs-install ## Serve docs locally

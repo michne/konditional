@@ -48,6 +48,9 @@ The publishable modules are the library modules that apply the
 GitHub Actions now follow the same split as local workflows:
 
 - `CI` runs tests on Linux and macOS and builds the docs with Zensical.
+- `Docs Pages` builds the Zensical site on `main`, uploads the generated
+  `site/` directory as a Pages artifact, and deploys it through the GitHub
+  Pages actions flow.
 - `Publish Snapshot` validates the current version, tests the build, and only
   publishes when the version is a snapshot.
 - `Release` runs from version tags, validates the release build, publishes the
