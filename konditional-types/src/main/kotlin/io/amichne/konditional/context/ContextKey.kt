@@ -4,7 +4,7 @@ package io.amichne.konditional.context
  * Typed key that identifies a named field within a [Context].
  *
  * Using [ContextKey] instead of a raw [String] prevents silent mislookups caused by
- * key typos or identifier drift — issues that raw strings hide until runtime.
+ * key typos or identifier konditional — issues that raw strings hide until runtime.
  *
  * ## Usage
  *

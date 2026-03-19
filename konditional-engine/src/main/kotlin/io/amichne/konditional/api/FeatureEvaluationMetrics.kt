@@ -5,6 +5,7 @@ package io.amichne.konditional.api
 import io.amichne.konditional.core.ops.Metrics
 import io.amichne.konditional.core.registry.NamespaceRegistry
 import io.amichne.konditional.internal.evaluation.EvaluationDiagnostics
+import kotlin.time.Duration
 
 internal fun <T : Any> logExplainIfNeeded(
     result: EvaluationDiagnostics<T>,
@@ -24,14 +25,14 @@ internal fun <T : Any> recordEvaluationMetrics(
     result: EvaluationDiagnostics<T>,
     registry: NamespaceRegistry,
     mode: Metrics.Evaluation.EvaluationMode,
-    durationNanos: Long,
+    duration: Duration,
 ) {
     registry.hooks.metrics.recordEvaluation(
         Metrics.Evaluation(
             namespaceId = registry.namespaceId,
             featureKey = result.featureKey,
             mode = mode,
-            durationNanos = durationNanos,
+            duration = duration,
             decision = result.decision.toMetricsDecisionKind(),
             configVersion = result.configVersion,
             bucket = result.decision.toMetricsBucket(),

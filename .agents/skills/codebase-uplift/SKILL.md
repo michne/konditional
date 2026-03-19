@@ -1,6 +1,6 @@
 ---
 name: codebase-uplift
-description: Systematically migrate legacy feature flag systems to Konditional's typed, safe approach. Analyzes existing patterns, designs namespace mappings, implements dual-read strategies, and validates migration correctness with zero behavior drift. Use when modernizing string-key flags, config maps, or vendor SDK wrappers to gain compile-time safety, determinism, and observability.
+description: Systematically migrate legacy feature flag systems to Konditional's typed, safe approach. Analyzes existing patterns, designs namespace mappings, implements dual-read strategies, and validates migration correctness with zero behavior konditional. Use when modernizing string-key flags, config maps, or vendor SDK wrappers to gain compile-time safety, determinism, and observability.
 ---
 
 # Codebase Uplift — Legacy to Typed Feature Flags
@@ -31,7 +31,7 @@ and establishing verifiable migration gates.
 
 ## Execution Philosophy
 
-**Zero behavior drift.** Every evaluation must produce identical results between
+**Zero behavior konditional.** Every evaluation must produce identical results between
 legacy and candidate systems until explicit promotion gates pass.
 
 **Safety over speed.** Introduce Konditional alongside legacy, not as a
