@@ -16,7 +16,7 @@ import io.amichne.konditional.rules.versions.VersionRange
  *   against one immutable registry snapshot.
  * - Contains only trusted, fully computed data produced by core evaluation;
  *   no parsing or lazy rule inspection occurs here.
- * - `durationNanos` reflects the measured evaluation wall-clock duration
+ * - `duration` reflects the measured evaluation wall-clock duration
  *   for observability only and does not affect semantics.
  *
  * Boundary expectations:

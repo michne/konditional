@@ -19,7 +19,7 @@ import io.amichne.konditional.rules.targeting.platformsOrEmpty
 import io.amichne.konditional.rules.targeting.versionRangeOrNull
 import io.amichne.konditional.rules.versions.Unbounded
 import java.security.MessageDigest
-import kotlin.system.measureNanoTime
+import kotlin.time.measureTimedValue
 
 private const val MINIMUM_ORDINAL = 0
 private const val RULE_ID_HASH_LENGTH = 8
@@ -40,7 +40,7 @@ private const val RULE_ID_HASH_LENGTH = 8
  * @return The evaluated value
  * @throws IllegalStateException if the feature is not registered in the registry
  */
-@OptIn(KonditionalInternalApi::class)
+
 fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluate(
     context: C,
     registry: NamespaceRegistry = namespace,
@@ -57,13 +57,12 @@ fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluate(
  * @return Deterministic evaluation diagnostics for this input and registry snapshot
  * @throws IllegalStateException if the feature is not registered in the registry
  */
-@OptIn(KonditionalInternalApi::class)
+
 fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.explain(
     context: C,
     registry: NamespaceRegistry = namespace,
 ): EvaluationDiagnostics<T> = evaluateInternal(context, registry, mode = Metrics.Evaluation.EvaluationMode.EXPLAIN)
 
-@OptIn(KonditionalInternalApi::class)
 @PublishedApi
 internal fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInternal(
     context: C,
@@ -76,37 +75,18 @@ internal fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInte
     definition = registry.flag(this),
 )
 
-@OptIn(KonditionalInternalApi::class)
 @PublishedApi
 internal fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInternal(
     context: C,
     registry: NamespaceRegistry,
     mode: Metrics.Evaluation.EvaluationMode,
     definition: FlagDefinition<T, C, M>,
-): EvaluationDiagnostics<T> {
-    lateinit var base: EvaluationDiagnostics<T>
-    val nanos = measureNanoTime { base = createBaseDiagnostics(context, registry, mode, definition) }
-    val result = base.copy(durationNanos = nanos)
+): EvaluationDiagnostics<T> =
+    measureTimedValue { createBaseDiagnostics(context, registry, mode, definition) }.also {
+        logExplainIfNeeded(it.value, registry, mode)
+        recordEvaluationMetrics(it.value, registry, mode, it.duration)
+    }.value
 
-    logExplainIfNeeded(result, registry, mode)
-    recordEvaluationMetrics(result, registry, mode, nanos)
-
-    return result
-}
-
-/**
- * Internal evaluation entrypoint used by sibling modules (e.g. shadow evaluation).
- *
- * Prefer [evaluate] / [explain] for application usage.
- */
-@KonditionalInternalApi
-fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.evaluateInternalApi(
-    context: C,
-    registry: NamespaceRegistry,
-    mode: Metrics.Evaluation.EvaluationMode,
-): EvaluationDiagnostics<T> = evaluateInternal(context, registry, mode)
-
-@OptIn(KonditionalInternalApi::class)
 private fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.createBaseDiagnostics(
     context: C,
     registry: NamespaceRegistry,
@@ -145,7 +125,6 @@ private fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.declaredDefau
 ): T =
     (namespace.declaredDefault(this) as? T) ?: fallback
 
-@OptIn(KonditionalInternalApi::class)
 private fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.createRuleDiagnostics(
     context: C,
     registry: NamespaceRegistry,
@@ -191,7 +170,6 @@ private fun <T : Any, C : Context, M : Namespace> Feature<T, C, M>.createRuleDia
     )
 }
 
-@OptIn(KonditionalInternalApi::class)
 private fun <T : Any, C : Context> ConditionalValue<T, C>.toRuleMatch(
     bucket: Int?,
     featureKey: String,
@@ -214,7 +192,6 @@ private fun <T : Any, C : Context> ConditionalValue<T, C>.toRuleMatch(
     }
 } ?: error("Bucket must be computed when a rule matches by criteria")
 
-@OptIn(KonditionalInternalApi::class)
 private fun <C : Context> Rule<C>.toExplanation(
     ruleId: String,
 ): EvaluationDiagnostics.RuleExplanation = EvaluationDiagnostics.RuleExplanation(
@@ -244,7 +221,6 @@ private fun createRuleId(namespaceId: String, featureKey: String, ruleOrdinal: I
     return "rule::$namespaceId::$featureKey::$shortHash"
 }
 
-@OptIn(KonditionalInternalApi::class)
 private fun <C : Context> Targeting.All<C>.toExtensionNode(): EvaluationDiagnostics.ExtensionNode {
     val hasExtension =
         targets.any { it is Targeting.Custom<*> || (it is Targeting.Guarded<*, *> && it.inner is Targeting.Custom<*>) }
@@ -258,7 +234,6 @@ private fun <C : Context> Targeting.All<C>.toExtensionNode(): EvaluationDiagnost
     }
 }
 
-@OptIn(KonditionalInternalApi::class)
 private fun <C : Context> Targeting.All<C>.toConditionalContextNode(): EvaluationDiagnostics.ConditionalContextNode {
     val hasNarrowing = targets.any { it is Targeting.Guarded<*, *> }
     return if (!hasNarrowing) {
@@ -271,13 +246,12 @@ private fun <C : Context> Targeting.All<C>.toConditionalContextNode(): Evaluatio
     }
 }
 
-@OptIn(KonditionalInternalApi::class)
 @Suppress("UNCHECKED_CAST")
 private fun <C : Context> Targeting.All<C>.toTargetingNode(): EvaluationDiagnostics.TargetingNode =
     EvaluationDiagnostics.TargetingNode.All(children = targets.map { (it as Targeting<Context>).toTargetingNode() })
 
 @Suppress("UNCHECKED_CAST")
-@OptIn(KonditionalInternalApi::class)
+
 private fun Targeting<Context>.toTargetingNode(): EvaluationDiagnostics.TargetingNode =
     when (this) {
         is Targeting.All<*> -> (this as Targeting.All<Context>).toTargetingNode()

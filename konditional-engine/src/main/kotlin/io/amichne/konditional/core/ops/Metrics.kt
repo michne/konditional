@@ -1,12 +1,14 @@
 package io.amichne.konditional.core.ops
 
+import kotlin.time.Duration
+
 object Metrics {
     @ConsistentCopyVisibility
     data class Evaluation internal constructor(
         val namespaceId: String,
         val featureKey: String,
         val mode: EvaluationMode,
-        val durationNanos: Long,
+        val duration: Duration,
         val decision: DecisionKind,
         val configVersion: String? = null,
         val bucket: Int? = null,
