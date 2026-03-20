@@ -31,7 +31,10 @@
       "Bash(cp -r /Users/amichne/code/konditional/kontracts/src/main/kotlin/io /Users/amichne/code/konditional/konditional-types/src/main/kotlin/)",
       "Bash(cp -r /Users/amichne/code/konditional/kontracts/src/test/kotlin/io /Users/amichne/code/konditional/konditional-types/src/test/kotlin/)",
       "Bash(./gradlew compileKotlin compileTestKotlin --no-daemon)",
-      "Bash(./gradlew test:*)"
+      "Bash(./gradlew test:*)",
+      "Bash(make docs-build:*)",
+      "Bash(python3 -c \"import zensical; print\\(zensical.__file__\\)\")",
+      "Bash(/Users/amichne/code/konditional/docs/venv/bin/python3 -c \"import zensical; print\\(zensical.__file__\\)\")"
     ]
   },
   "hooks": {
