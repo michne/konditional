@@ -97,8 +97,13 @@ Use when touching parsing, engine evaluation, or contracts.
 ## 5) Commands you should prefer
 
 - Build/test/check: `make build`, `make test`, `make detekt`, `make check`
-- Docs site: `make docs-build`, `make docs-serve`, `make docs-clean`
-- Publish helpers: `make publish-plan`, `./scripts/publish.sh ...`
+- Compile-only loops: `make compile`, `make compile-test`
+- Clean/rebuild loops: `make clean`, `make rebuild`, `make full-clean`
+- Docs site: `make docs-install`, `make docs-build`, `make docs-serve`, `make docs-clean`
+- Publish planning + validation: `make publish-plan`, `make validate-publish`
+- Publish execution: `make publish-local`, `make publish-snapshot`, `make publish-release`, `make publish-github`
+- Version helpers: `make publish-version-{none|snapshot|patch|minor|major}`
+- Legacy publish entrypoint (still available): `./scripts/publish.sh ...`
 
 Choose the **narrowest command** that validates your change.
 
