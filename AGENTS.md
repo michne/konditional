@@ -27,7 +27,6 @@ Top-level areas and their purpose:
 - `kontracts/` → contracts/spec artifacts
 - `smoke-test/` → integration smoke tests
 - `docs/` → documentation site (MkDocs/Zensical)
-- `skill/` → agent skill definition (`skill/SKILL.md`)
 
 Hard boundaries:
 - **`konditional-types` is downstream of nothing** in the main stack — no deps on engine or JSON.
@@ -51,7 +50,6 @@ Use this path before making non-trivial edits:
 5. **Prove behavior**
    - Add tests for determinism, boundary errors, atomicity, and isolation where relevant.
 
-For agent-specific acceleration, inspect `skill/SKILL.md`.
 
 ---
 
@@ -125,7 +123,6 @@ Use test fixtures (`java-test-fixtures`) for shared helpers where appropriate.
 
 1. `docs/` for invariants, quickstart, and reference notes.
 2. Module tests in the owning package for executable examples.
-3. `skill/SKILL.md` for task-specific integration playbook.
 
 If a referenced file is missing, search for closest equivalent before introducing a new pattern.
 

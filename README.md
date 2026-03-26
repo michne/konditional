@@ -109,6 +109,4 @@ runtime behavior.
 These links cover the project basics for contributors and evaluators.
 
 - [Contributing guide](CONTRIBUTING.md)
-- [Code of conduct](CODE_OF_CONDUCT.md)
-- [Changelog](CHANGELOG.md)
 - [License](LICENSE)

@@ -1031,12 +1031,10 @@ build/
 
 ### VS Code ###
 .vscode/
-!/docusaurus/.claude/
 
 # Generated API/type signatures are checked in and drift-checked in CI.
 .signatures/
 signatures/
-!/.claude/
 .claude/settings.json
 .claude/sig-reachability-report.md
 
