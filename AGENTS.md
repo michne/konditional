@@ -95,12 +95,16 @@ Use when touching parsing, engine evaluation, or contracts.
 ## 5) Commands you should prefer
 
 - Build/test/check: `make build`, `make test`, `make detekt`, `make check`
+- One-shot full loop: `make all`
 - Compile-only loops: `make compile`, `make compile-test`
 - Clean/rebuild loops: `make clean`, `make rebuild`, `make full-clean`
 - Docs site: `make docs-install`, `make docs-build`, `make docs-serve`, `make docs-clean`
+- Canonical publish flow: `make publish` (interactive, on-rails)
 - Publish planning + validation: `make publish-plan`, `make validate-publish`
+- Targeted publish validation: `make publish-validate-{local|snapshot|release|github}`
 - Publish execution: `make publish-local`, `make publish-snapshot`, `make publish-release`, `make publish-github`
-- Version helpers: `make publish-version-{none|snapshot|patch|minor|major}`
+- Direct publish runners: `make publish-run-{local|snapshot|release|github}`
+- Version helpers: `make publish-version-{none|snapshot|patch|minor|major|patch-snapshot|minor-snapshot|major-snapshot}`
 - Legacy publish entrypoint (still available): `./scripts/publish.sh ...`
 
 Choose the **narrowest command** that validates your change.
